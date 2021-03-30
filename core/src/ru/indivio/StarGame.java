@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class StarGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
+	Texture imgBliki;
 	int count = 0;
 	TextureRegion region;
 	TextureRegion region2;
@@ -21,6 +22,7 @@ public class StarGame extends ApplicationAdapter {
 		batch = new SpriteBatch();
 //		текстуры
 		img = new Texture("badlogic.jpg");
+		imgBliki = new Texture("bliki.jpg");
 		region = new TextureRegion(img); //TextureRegion не хранит текстуру
 		//вырезаем из текстуры прямоугольник по координатам 50, 50 размером 150х150
 		region2 = new TextureRegion(img,50,50, 150, 150);
@@ -38,6 +40,7 @@ public class StarGame extends ApplicationAdapter {
 		batch.setColor(1,1,1,1);
 		//рисуем картинку
 		batch.draw(img, 0, 0);
+		batch.draw(imgBliki, 0, 0, 640,512);
 		//цвет текстуры и 50% прозрачная картинка
 		batch.setColor(0.2f,0.2f,0.2f,0.5f);
 		//добавляем регион в координаты x,y
