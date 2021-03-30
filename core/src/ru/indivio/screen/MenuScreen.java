@@ -12,14 +12,17 @@ public class MenuScreen extends BaseScreen {
 
     private Texture img;
     private Vector2 pos;
-    private Vector2 v;
+    private Vector2 velocity;
+    private Vector2 touchPosition, stopPos;
 
     @Override
     public void show() {
         super.show();
         img = new Texture("badlogic.jpg");
-        pos = new Vector2();
-        v = new Vector2(1, 1);
+        pos = new Vector2(0,0);
+        touchPosition = new Vector2(0,0);
+        stopPos = new Vector2(0,0);
+        velocity = new Vector2(0,0);
     }
 
     @Override
@@ -30,7 +33,9 @@ public class MenuScreen extends BaseScreen {
         batch.begin();
         batch.draw(img, pos.x, pos.y);
         batch.end();
-        pos.add(v);
+        if ((Math.abs(pos.x - stopPos.x))>= Math.abs(velocity.x)){
+            pos.add(velocity);
+        }
     }
 
     @Override
@@ -41,7 +46,9 @@ public class MenuScreen extends BaseScreen {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        pos.set(screenX, Gdx.graphics.getHeight() - screenY);  //выставляем позицию
+        touchPosition.set(screenX, Gdx.graphics.getHeight() - screenY);
+        stopPos.set(touchPosition.x,touchPosition.y);
+        velocity = touchPosition.sub(pos).nor();
         return false;
     }
 
