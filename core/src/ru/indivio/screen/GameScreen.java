@@ -33,6 +33,7 @@ public class GameScreen extends BaseScreen {
         background = new Background(bg);
 
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
+
         mainShip = new Ship(atlas);
         stars = new Star[STAR_COUNT];
         for (int i = 0; i < STAR_COUNT; i++) {

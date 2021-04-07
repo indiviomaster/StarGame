@@ -16,7 +16,7 @@ public class Ship extends Sprite {
     private float height;
 
     public Ship(TextureAtlas atlas) {
-        super(atlas.findRegion("main_ship"));//Задвоенный корабль
+        super(new TextureAtlas.AtlasRegion(atlas.findRegion("main_ship").getTexture(),atlas.findRegion("main_ship").getRegionX(),atlas.findRegion("main_ship").getRegionY(),atlas.findRegion("main_ship").getRegionWidth()/2,atlas.findRegion("main_ship").getRegionHeight()));//Задвоенный корабль
         velocity = new Vector2();//скорость перемещения корабля
     }
 
