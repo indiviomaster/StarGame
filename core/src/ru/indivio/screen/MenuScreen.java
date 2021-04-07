@@ -18,10 +18,7 @@ public class MenuScreen extends BaseScreen {
     private Background background;
     private Texture smileTexture;
     private Smile smile;
-    private Vector2 smilePos;
-    private Vector2 smileToPos;
-    private Vector2 smileStopPos;
-    private Vector2 velocity;
+
 
     @Override
     public void show() {
@@ -31,10 +28,6 @@ public class MenuScreen extends BaseScreen {
 
         smileTexture = new Texture("badlogic.jpg");
         smile = new Smile(smileTexture);
-        smilePos = new Vector2(0,0);
-        smileToPos = new Vector2(0,0);
-        smileStopPos = new Vector2(0,0);
-        velocity = new Vector2(0,0);
     }
 
     @Override
@@ -49,14 +42,12 @@ public class MenuScreen extends BaseScreen {
         super.render(delta);
         Gdx.gl.glClearColor(0.56f, 0.81f, 0.26f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        smile.update(delta);
+        //отрисовка
         batch.begin();
         background.draw(batch);
-        System.out.println("X="+smilePos.x+"v="+ velocity.x + "D= "+(smilePos.x - smileStopPos.x));
-        smile.draw(batch, smilePos);
-        if ((Math.abs(smilePos.x - smileStopPos.x))>= Math.abs(velocity.x)){
-            smilePos.add(velocity);
-            System.out.println("Добавляем вектор"+velocity.x);
-        }
+        smile.draw(batch);
         batch.end();
     }
 
@@ -68,20 +59,11 @@ public class MenuScreen extends BaseScreen {
     }
 
     @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        System.out.println("Menu touchDown screenX = " + screenX + " screenY = " + screenY);
-        smileToPos.set(screenX, screenBounds.getHeight()- screenY).mul(screenToWorld);
-        smileStopPos.set(smileToPos.x,smileToPos.y);
-        velocity = smileToPos.sub(smilePos).nor();
+    public boolean touchUp(Vector2 touch, int pointer, int button) {
+        System.out.println("Menu touchDown screenX = " + touch.x + " screenY = " + touch.y);
+        smile.touchUp(touch, pointer, button); //пробрасываем координаты в лого
         return false;
     }
-
-
-//    @Override
-//    public boolean touchDown(Vector2 touch, int pointer, int button) {
-//
-//        return false;
-//    }
 
 //    @Override
 //    public boolean keyDown(int keycode) {
