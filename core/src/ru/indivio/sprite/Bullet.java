@@ -49,7 +49,6 @@ public class Bullet extends Sprite {
         pos.mulAdd(v, delta);
         if (isOutside(worldBounds)) {
             destroy();
-            buletSound.dispose();
         }
     }
 
