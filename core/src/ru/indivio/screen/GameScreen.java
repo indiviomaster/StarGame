@@ -9,7 +9,9 @@ import com.badlogic.gdx.math.Vector2;
 import ru.indivio.base.BaseScreen;
 import ru.indivio.math.Rect;
 import ru.indivio.pool.BulletPool;
+import ru.indivio.pool.EnemyShipPool;
 import ru.indivio.sprite.Background;
+import ru.indivio.sprite.EnemyShip;
 import ru.indivio.sprite.Ship;
 import ru.indivio.sprite.Star;
 
@@ -25,11 +27,16 @@ public class GameScreen extends BaseScreen {
 
     private Star [] stars;
     private Ship mainShip;
+    private EnemyShipPool enemyPool;
+    private int timer;
+    private EnemyShip enemyShip;
+
 
     private BulletPool bulletPool;
 
     @Override
     public void show() {
+        timer = 0;
         super.show();
         bg = new Texture("textures/bg.png");
         background = new Background(bg);
@@ -41,7 +48,10 @@ public class GameScreen extends BaseScreen {
             stars[i] = new Star(atlas);
         }
         bulletPool = new BulletPool();
+        enemyPool = new EnemyShipPool();
+        enemyPool.setAtlas(atlas);
         mainShip = new Ship(atlas, bulletPool);
+        enemyShip = new EnemyShip(atlas);
     }
 
     @Override
@@ -59,6 +69,7 @@ public class GameScreen extends BaseScreen {
             star.resize(worldBounds);
         }
         mainShip.resize(worldBounds);
+        enemyShip.resize(worldBounds);
     }
 
     @Override
@@ -97,24 +108,34 @@ public class GameScreen extends BaseScreen {
         for (Star star : stars) {
             star.update(delta);
         }
+        if(timer == 300){
+            EnemyShip sh = enemyPool.obtain();
+            timer = 0;
+        }
+        timer +=1;
         mainShip.update(delta);
+        enemyShip.update(delta);
         bulletPool.updateActiveSprites(delta);
+        enemyPool.updateActiveSprites(delta);
     }
 
     private void freeAllDestroyed() {
         bulletPool.freeAllDestroyedActiveSprites();
+        enemyPool.freeAllDestroyedActiveSprites();
     }
 
     private void draw() {
         Gdx.gl.glClearColor(0.56f, 0.81f, 0.26f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
+        enemyShip.draw(batch);
         background.draw(batch);
         for (Star star : stars) {
             star.draw(batch);
         }
         mainShip.draw(batch);
         bulletPool.drawActiveSprites(batch);
+        enemyPool.drawActiveSprites(batch);
         batch.end();
     }
 }
