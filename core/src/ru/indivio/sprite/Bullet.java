@@ -39,9 +39,6 @@ public class Bullet extends Sprite {
         this.damage = damage;
         setHeightProportion(height);
 
-
-
-
     }
 
     @Override
