@@ -33,7 +33,6 @@ public class MenuScreen extends BaseScreen {
         this.game = game;
     }
 
-
     @Override
     public void show() {
         super.show();
@@ -42,12 +41,10 @@ public class MenuScreen extends BaseScreen {
 
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
 
-        //отрисовка звезд
         stars = new Star[STAR_COUNT];
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
-        //отрисовка кнопок управления
         exitButton = new ExitButton(atlas);
         playButton = new PlayButton(atlas, game);
     }
@@ -78,18 +75,19 @@ public class MenuScreen extends BaseScreen {
     }
 
     @Override
+    public boolean touchDown(Vector2 touch, int pointer, int button) {
+        exitButton.touchDown(touch, pointer, button);
+        playButton.touchDown(touch, pointer, button);
+        return false;
+    }
+
+    @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
         exitButton.touchUp(touch, pointer, button);
         playButton.touchUp(touch, pointer, button);
         return false;
     }
 
-    @Override
-    public boolean touchDown(Vector2 touch, int pointer, int button) {
-        exitButton.touchDown(touch, pointer, button);
-        playButton.touchDown(touch, pointer, button);
-        return false;
-    }
     private void update(float delta) {
         for (Star star : stars) {
             star.update(delta);
@@ -108,23 +106,4 @@ public class MenuScreen extends BaseScreen {
         playButton.draw(batch);
         batch.end();
     }
-
-//    @Override
-//    public boolean keyDown(int keycode) {
-//        switch (keycode) {
-//            case Input.Keys.UP:
-//                pos.y += 10;
-//                break;
-//            case Input.Keys.DOWN:
-//                pos.y -= 10;
-//                break;
-//            case Input.Keys.RIGHT:
-//                pos.x += 10;
-//                break;
-//            case Input.Keys.LEFT:
-//                pos.x -= 10;
-//                break;
-//        }
-//        return false;
-//    }
 }

@@ -1,7 +1,6 @@
 package ru.indivio.screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.indivio.base.BaseScreen;
 import ru.indivio.math.Rect;
+import ru.indivio.pool.BulletPool;
 import ru.indivio.sprite.Background;
 import ru.indivio.sprite.Ship;
 import ru.indivio.sprite.Star;
@@ -17,14 +17,16 @@ import ru.indivio.sprite.Star;
 public class GameScreen extends BaseScreen {
 
     private static final int STAR_COUNT = 64;
-    private Vector2 GO_RIGHT = new Vector2(0.01f,0);
-    private Vector2 GO_LEFT = new Vector2(-0.01f,0);
+
     private Texture bg;
     private Background background;
 
     private TextureAtlas atlas;
-    private Ship mainShip;
+
     private Star [] stars;
+    private Ship mainShip;
+
+    private BulletPool bulletPool;
 
     @Override
     public void show() {
@@ -34,16 +36,18 @@ public class GameScreen extends BaseScreen {
 
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
 
-        mainShip = new Ship(atlas);
         stars = new Star[STAR_COUNT];
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
+        bulletPool = new BulletPool();
+        mainShip = new Ship(atlas, bulletPool);
     }
 
     @Override
     public void render(float delta) {
         update(delta);
+        freeAllDestroyed();
         draw();
     }
 
@@ -51,10 +55,10 @@ public class GameScreen extends BaseScreen {
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
         background.resize(worldBounds);
-        mainShip.resize(worldBounds);
         for (Star star : stars) {
             star.resize(worldBounds);
         }
+        mainShip.resize(worldBounds);
     }
 
     @Override
@@ -62,24 +66,43 @@ public class GameScreen extends BaseScreen {
         super.dispose();
         bg.dispose();
         atlas.dispose();
+        bulletPool.dispose();
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        return super.touchDown(touch, pointer, button);
+        mainShip.touchDown(touch, pointer, button);
+        return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        return super.touchUp(touch, pointer, button);
+        mainShip.touchUp(touch, pointer, button);
+        return false;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        mainShip.keyDown(keycode);
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        mainShip.keyUp(keycode);
+        return false;
     }
 
     private void update(float delta) {
-
         for (Star star : stars) {
             star.update(delta);
         }
         mainShip.update(delta);
+        bulletPool.updateActiveSprites(delta);
+    }
+
+    private void freeAllDestroyed() {
+        bulletPool.freeAllDestroyedActiveSprites();
     }
 
     private void draw() {
@@ -87,25 +110,11 @@ public class GameScreen extends BaseScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         background.draw(batch);
-        mainShip.draw(batch);
         for (Star star : stars) {
             star.draw(batch);
         }
+        mainShip.draw(batch);
+        bulletPool.drawActiveSprites(batch);
         batch.end();
-    }
-
-    @Override
-    public boolean keyDown(int keycode) {
-        switch (keycode) {
-            case Input.Keys.RIGHT:
-                mainShip.setVelocity(GO_RIGHT);
-                break;
-            case Input.Keys.LEFT:
-                mainShip.setVelocity(GO_LEFT);
-                break;
-            default:
-                break;
-        }
-        return false;
     }
 }
