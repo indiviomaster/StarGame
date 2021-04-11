@@ -14,19 +14,13 @@ import ru.indivio.math.Rect;
 public class BaseScreen implements Screen, InputProcessor {
 
     protected SpriteBatch batch;
-    //создание экранов
-    // в px
-    protected Rect screenBounds;
-    protected Rect worldBounds;
-    // в OpenGL
-    protected Rect glBounds;
-    //матрица перевода в OpenGL
-    //batcher использует матрицу 4х4
-    protected Matrix4 worldToGl;
-    //экран 2Д
-    protected Matrix3 screenToWorld;
-    protected Vector2 touch;
+    private Rect screenBounds;
+    private Rect worldBounds;
+    private Rect glBounds;
+    private Matrix4 worldToGl;
+    private Matrix3 screenToWorld;
 
+    private Vector2 touch;
 
     @Override
     public void show() {
@@ -34,11 +28,12 @@ public class BaseScreen implements Screen, InputProcessor {
         batch = new SpriteBatch();
         screenBounds = new Rect();
         worldBounds = new Rect();
-        glBounds = new Rect(0,0,1f,1f);
-        worldToGl =new Matrix4();
-        screenToWorld = new Matrix3();
-        touch = new Vector2();
+        glBounds = new Rect(0, 0, 1f, 1f);
 
+        worldToGl = new Matrix4();
+        screenToWorld = new Matrix3();
+
+        touch = new Vector2();
 
         Gdx.input.setInputProcessor(this);
     }
@@ -51,20 +46,21 @@ public class BaseScreen implements Screen, InputProcessor {
     @Override
     public void resize(int width, int height) {
         System.out.println("resize width = " + width + " height = " + height);
-        screenBounds.setSize(width,height);
+        screenBounds.setSize(width, height);
         screenBounds.setLeft(0);
         screenBounds.setBottom(0);
-        float aspect = width/(float) height;
+
+        float aspect = width / (float) height;
         worldBounds.setHeight(1f);
-        worldBounds.setWidth(1f*aspect);
-        //рассчет матрицы перевода
-        MatrixUtils.calcTransitionMatrix(worldToGl,worldBounds,glBounds);
-        MatrixUtils.calcTransitionMatrix(screenToWorld,screenBounds,worldBounds);
-        batch.setProjectionMatrix(worldToGl);//устанавливаем матрицу
+        worldBounds.setWidth(1f * aspect);
+        MatrixUtils.calcTransitionMatrix(worldToGl, worldBounds, glBounds);
+        MatrixUtils.calcTransitionMatrix(screenToWorld, screenBounds, worldBounds);
+        batch.setProjectionMatrix(worldToGl);
         resize(worldBounds);
     }
-    public void resize(Rect worldBounds){
-        System.out.println("resize worldbounds width = " + worldBounds.getWidth() + " height = " + worldBounds.getHeight());
+
+    public void resize(Rect worldBounds) {
+        System.out.println("resize worldBounds.width = " + worldBounds.getWidth() + " worldBounds.height = " + worldBounds.getHeight());
     }
 
     @Override
@@ -81,6 +77,7 @@ public class BaseScreen implements Screen, InputProcessor {
     public void hide() {
         System.out.println("hide");
         dispose();
+
     }
 
     @Override
@@ -110,38 +107,39 @@ public class BaseScreen implements Screen, InputProcessor {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         System.out.println("touchDown screenX = " + screenX + " screenY = " + screenY);
-        touch.set(screenX, screenBounds.getHeight()- screenY).mul(screenToWorld);
+        touch.set(screenX, screenBounds.getHeight() - screenY).mul(screenToWorld);
         touchDown(touch, pointer, button);
         return false;
     }
 
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        System.out.println("touchDown touch X = " + touch.x + " Y = " + touch.x);
+        System.out.println("touchDown touchX = " + touch.x + " touchY = " + touch.y);
         return false;
     }
-
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         System.out.println("touchUp screenX = " + screenX + " screenY = " + screenY);
-        touch.set(screenX, screenBounds.getHeight()- screenY).mul(screenToWorld);
+        touch.set(screenX, screenBounds.getHeight() - screenY).mul(screenToWorld);
         touchUp(touch, pointer, button);
         return false;
     }
+
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        System.out.println("touchUp touchX = " + touch.x + " Y = " + touch.x);
+        System.out.println("touchUp touchX = " + touch.x + " touchY = " + touch.y);
         return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         System.out.println("touchDragged screenX = " + screenX + " screenY = " + screenY);
-        touch.set(screenX, screenBounds.getHeight()- screenY).mul(screenToWorld);
+        touch.set(screenX, screenBounds.getHeight() - screenY).mul(screenToWorld);
         touchDragged(touch, pointer);
         return false;
     }
+
     public boolean touchDragged(Vector2 touch, int pointer) {
-        System.out.println("touchDragged touchX = " + touch.x + " Y = " + touch.x);
+        System.out.println("touchDragged touchX = " + touch.x + " touchY = " + touch.y);
         return false;
     }
 

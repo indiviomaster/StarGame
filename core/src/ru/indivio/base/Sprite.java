@@ -5,18 +5,28 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.indivio.math.Rect;
+import ru.indivio.utils.Regions;
 
 
 public class Sprite extends Rect {
 
-    protected float angle; //угол поворота
-    protected float scale = 1f; //масштаб
-    protected TextureRegion[] regions; //регионы для анимации
-    protected int frame; // текущая текстура
+    protected float angle;
+    protected float scale = 1f;
+    protected TextureRegion[] regions;
+    protected int frame;
+    private boolean destroyed;
+
+    public Sprite() {
+
+    }
 
     public Sprite(TextureRegion region) {
         regions = new TextureRegion[1];
         regions[0] = region;
+    }
+
+    public Sprite(TextureRegion region, int rows, int cols, int frames) {
+        regions = Regions.split(region, rows, cols, frames);
     }
 
     public void setHeightProportion(float height) {
@@ -35,12 +45,12 @@ public class Sprite extends Rect {
 
     public void draw(SpriteBatch batch) {
         batch.draw(
-                regions[frame], //текущая текстура
+                regions[frame],
                 getLeft(), getBottom(),
-                halfWidth, halfHeight, //центруем позицию
-                getWidth(), getHeight(), //устанавливаем новые размеры
-                scale, scale, //масштабируем
-                angle //поворачиваем
+                halfWidth, halfHeight,
+                getWidth(), getHeight(),
+                scale, scale,
+                angle
         );
     }
 
@@ -70,5 +80,17 @@ public class Sprite extends Rect {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public void destroy() {
+        destroyed = true;
+    }
+
+    public void flushDestroy() {
+        destroyed = false;
+    }
+
+    public boolean isDestroyed() {
+        return destroyed;
     }
 }
