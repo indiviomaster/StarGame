@@ -77,7 +77,9 @@ public class BaseScreen implements Screen, InputProcessor {
     @Override
     public void resume() {
         System.out.println("resume");
+        music.setVolume(0.2f);
         music.play();
+
     }
 
     @Override

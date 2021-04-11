@@ -163,6 +163,11 @@ public class Ship extends Sprite {
 
     private void shoot() {
         Bullet bullet = bulletPool.obtain();
+        if (!bullet.isDestroyed()){
+        bullet.shotSound();
+        }else{
+            bullet.shotSoundDispose();
+        }
         bullet.set(this, bulletRegion, this.pos, bulletV, worldBounds, 1, 0.01f);
     }
 }

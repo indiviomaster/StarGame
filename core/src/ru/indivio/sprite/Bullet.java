@@ -1,5 +1,7 @@
 package ru.indivio.sprite;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
@@ -13,10 +15,11 @@ public class Bullet extends Sprite {
     private Vector2 v;
     private int damage;
     private Sprite owner;
-
+    private Sound buletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
     public Bullet() {
         regions = new TextureRegion[1];
         v = new Vector2();
+
     }
 
     public void set(
@@ -35,6 +38,10 @@ public class Bullet extends Sprite {
         this.worldBounds = worldBounds;
         this.damage = damage;
         setHeightProportion(height);
+
+
+
+
     }
 
     @Override
@@ -42,8 +49,20 @@ public class Bullet extends Sprite {
         pos.mulAdd(v, delta);
         if (isOutside(worldBounds)) {
             destroy();
+            buletSound.dispose();
         }
     }
+
+    public void shotSound(){
+
+        buletSound.play(0.3f);
+    }
+
+    public void shotSoundDispose(){
+        buletSound.stop();
+        buletSound.dispose();
+    }
+
 
     public int getDamage() {
         return damage;
