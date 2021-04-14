@@ -33,6 +33,8 @@ public class MainShip extends Ship {
         damage = 1;
         reloadInterval = 0.2f;
         hp = 100;
+        //onScreen = true;
+        onMarsh = false;
     }
 
     @Override
