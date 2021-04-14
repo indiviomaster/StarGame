@@ -3,7 +3,6 @@ package ru.indivio.base;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Matrix4;
@@ -16,11 +15,11 @@ public class BaseScreen implements Screen, InputProcessor {
 
     protected SpriteBatch batch;
     private Rect screenBounds;
-    private Rect worldBounds;
+    protected Rect worldBounds;
     private Rect glBounds;
+
     private Matrix4 worldToGl;
     private Matrix3 screenToWorld;
-    Music music;
 
     private Vector2 touch;
 
@@ -38,8 +37,6 @@ public class BaseScreen implements Screen, InputProcessor {
         touch = new Vector2();
 
         Gdx.input.setInputProcessor(this);
-        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
-        music.play();
     }
 
     @Override
@@ -70,15 +67,12 @@ public class BaseScreen implements Screen, InputProcessor {
     @Override
     public void pause() {
         System.out.println("pause");
-        music.stop();
     }
 
 
     @Override
     public void resume() {
         System.out.println("resume");
-        music.setVolume(0.2f);
-        music.play();
 
     }
 
@@ -93,7 +87,6 @@ public class BaseScreen implements Screen, InputProcessor {
     public void dispose() {
         System.out.println("dispose");
         batch.dispose();
-        music.dispose();
     }
 
     @Override

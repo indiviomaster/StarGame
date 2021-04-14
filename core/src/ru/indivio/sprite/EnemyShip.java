@@ -1,38 +1,49 @@
 package ru.indivio.sprite;
 
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.indivio.base.Sprite;
 import ru.indivio.math.Rect;
+import ru.indivio.pool.BulletPool;
 
 
-public class EnemyShip extends Sprite {
+public class EnemyShip extends Ship {
 
-    private static final float HEIGHT = 0.15f;
-    private static final float PADDING = 0.05f;
-
-    private Rect worldBounds;
-
-    private final Vector2 v;
-
-    public EnemyShip(TextureAtlas atlas) {
-        super(atlas.findRegion("enemy0"), 1, 2, 2);
-        System.out.println("Создан враг");
-        pos.set(0.2f,0.2f);
-        v = new Vector2(-0.1f,-0.2f);
+    public EnemyShip(BulletPool bulletPool, Rect worldBounds, Sound sound) {
+        this.bulletPool = bulletPool;
+        this.worldBounds = worldBounds;
+        this.sound = sound;
     }
 
-    @Override
-    public void resize(Rect worldBounds) {
-        this.worldBounds = worldBounds;
-        setHeightProportion(HEIGHT);
-        setTop(worldBounds.getTop() - PADDING);
+    public void set(
+            TextureRegion[] regions,
+            Vector2 v,
+            TextureRegion bulletRegion,
+            float bulletHeight,
+            float bulletVY,
+            int damage,
+            float reloadInterval,
+            float height,
+            int hp
+    ) {
+        this.regions = regions;
+        this.v.set(v);
+        this.bulletRegion = bulletRegion;
+        this.bulletHeight = bulletHeight;
+        this.bulletV.set(0, bulletVY);
+        this.damage = damage;
+        this.reloadInterval = reloadInterval;
+        setHeightProportion(height);
+        this.hp = hp;
     }
 
     @Override
     public void update(float delta) {
-        pos.mulAdd(v, delta);
+        super.update(delta);
+        if (getBottom() < worldBounds.getBottom()) {
+            destroy();
+        }
     }
 
 }

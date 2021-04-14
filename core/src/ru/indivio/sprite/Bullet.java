@@ -49,17 +49,6 @@ public class Bullet extends Sprite {
         }
     }
 
-    public void shotSound(){
-
-        buletSound.play(0.3f);
-    }
-
-    public void shotSoundDispose(){
-        buletSound.stop();
-        buletSound.dispose();
-    }
-
-
     public int getDamage() {
         return damage;
     }
