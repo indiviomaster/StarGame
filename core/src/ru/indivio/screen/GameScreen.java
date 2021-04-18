@@ -126,12 +126,14 @@ public class GameScreen extends BaseScreen {
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
         mainShip.touchDown(touch, pointer, button);
+        newGameButton.touchDown(touch, pointer, button);
         return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
         mainShip.touchUp(touch, pointer, button);
+        newGameButton.touchUp(touch, pointer, button);
         return false;
     }
 
@@ -221,5 +223,8 @@ public class GameScreen extends BaseScreen {
         }
         explosionPool.drawActiveSprites(batch);
         batch.end();
+    }
+    public void newGame(){
+        mainShip.flushDestroy();
     }
 }
