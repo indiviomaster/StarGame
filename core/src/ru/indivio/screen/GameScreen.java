@@ -1,5 +1,6 @@
 package ru.indivio.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -20,6 +21,7 @@ import ru.indivio.sprite.Bullet;
 import ru.indivio.sprite.EnemyShip;
 import ru.indivio.sprite.GameOver;
 import ru.indivio.sprite.MainShip;
+import ru.indivio.sprite.NewGameButton;
 import ru.indivio.sprite.Star;
 import ru.indivio.utils.EnemyEmitter;
 
@@ -27,7 +29,7 @@ import ru.indivio.utils.EnemyEmitter;
 public class GameScreen extends BaseScreen {
 
     private static final int STAR_COUNT = 64;
-
+    private Game game;
     private Texture bg;
     private Background background;
 
@@ -50,6 +52,14 @@ public class GameScreen extends BaseScreen {
     private ExplosionPool explosionPool;
 
     private GameOver gameOver;
+    private NewGameButton newGameButton;
+
+    public GameScreen(Game game){
+        this.game = game;
+    }
+    public GameScreen(){
+    }
+
 
     @Override
     public void show() {
@@ -72,6 +82,8 @@ public class GameScreen extends BaseScreen {
         enemyEmitter = new EnemyEmitter(worldBounds, enemyPool, atlas);
         mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
         gameOver = new GameOver(atlas);
+        newGameButton = new NewGameButton(atlas,game);
+
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
         music.setLooping(true);
         music.play();
@@ -94,6 +106,7 @@ public class GameScreen extends BaseScreen {
         }
         mainShip.resize(worldBounds);
         gameOver.resize(worldBounds);
+        newGameButton.resize(worldBounds);
     }
 
     @Override
@@ -200,6 +213,7 @@ public class GameScreen extends BaseScreen {
         }
         if (mainShip.isDestroyed()) {
             gameOver.draw(batch);
+            newGameButton.draw(batch);
         } else {
             mainShip.draw(batch);
             bulletPool.drawActiveSprites(batch);

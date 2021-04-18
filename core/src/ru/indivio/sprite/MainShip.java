@@ -34,7 +34,7 @@ public class MainShip extends Ship {
         bulletHeight = 0.01f;
         damage = 1;
         reloadInterval = 0.2f;
-        hp = 2;
+        hp = 1;
         //onScreen = true;
         //onMarsh = false;
     }
