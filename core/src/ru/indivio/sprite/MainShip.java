@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.indivio.math.Rect;
 import ru.indivio.pool.BulletPool;
+import ru.indivio.pool.ExplosionPool;
 
 
 public class MainShip extends Ship {
@@ -22,9 +23,10 @@ public class MainShip extends Ship {
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
 
-    public MainShip(TextureAtlas atlas, BulletPool bulletPool, Sound sound) {
+    public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool, Sound sound) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
         this.sound = sound;
         this.bulletRegion = atlas.findRegion("bulletMainShip");
         bulletV.set(0, 0.5f);
@@ -32,7 +34,9 @@ public class MainShip extends Ship {
         bulletHeight = 0.01f;
         damage = 1;
         reloadInterval = 0.2f;
-        hp = 100;
+        hp = 2;
+        //onScreen = true;
+        //onMarsh = false;
     }
 
     @Override
@@ -145,4 +149,10 @@ public class MainShip extends Ship {
         v.setZero();
     }
 
+    public boolean isBulletCollision(Rect bullet) {
+        return !(bullet.getRight() < getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > pos.y
+                || bullet.getTop() < getBottom());
+    }
 }

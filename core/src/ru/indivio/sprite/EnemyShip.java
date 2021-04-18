@@ -6,12 +6,14 @@ import com.badlogic.gdx.math.Vector2;
 
 import ru.indivio.math.Rect;
 import ru.indivio.pool.BulletPool;
+import ru.indivio.pool.ExplosionPool;
 
 
 public class EnemyShip extends Ship {
 
-    public EnemyShip(BulletPool bulletPool, Rect worldBounds, Sound sound) {
+    public EnemyShip(BulletPool bulletPool, ExplosionPool explosionPool, Rect worldBounds, Sound sound) {
         this.bulletPool = bulletPool;
+        this.explosionPool = explosionPool;
         this.worldBounds = worldBounds;
         this.sound = sound;
     }
@@ -41,9 +43,25 @@ public class EnemyShip extends Ship {
     @Override
     public void update(float delta) {
         super.update(delta);
+//        isOnScreen();
+//        if (getBottom() < worldBounds.getBottom()) {
+//            destroy();
+//        }
+        if (getTop() < worldBounds.getTop()) {
+            v.set(v0);
+        } else {
+            reloadTimer = reloadInterval * 0.8f;
+        }
         if (getBottom() < worldBounds.getBottom()) {
             destroy();
         }
+    }
+
+    public boolean isBulletCollision(Rect bullet) {
+        return !(bullet.getRight() < getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > getTop()
+                || bullet.getTop() < pos.y);
     }
 
 }
