@@ -1,6 +1,5 @@
 package ru.indivio.screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -8,10 +7,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Align;
 
 import java.util.List;
 
 import ru.indivio.base.BaseScreen;
+import ru.indivio.base.Font;
 import ru.indivio.math.Rect;
 import ru.indivio.pool.BulletPool;
 import ru.indivio.pool.EnemyPool;
@@ -29,7 +30,13 @@ import ru.indivio.utils.EnemyEmitter;
 public class GameScreen extends BaseScreen {
 
     private static final int STAR_COUNT = 64;
-    private Game game;
+    private static final float FONT_SIZE = 0.02f;
+    private static final float PADDING = 0.01f;
+
+    private static final String FRAGS = "Frags: ";
+    private static final String HP = "HP: ";
+    private static final String LEVEL = "Level: ";
+
     private Texture bg;
     private Background background;
 
@@ -37,7 +44,6 @@ public class GameScreen extends BaseScreen {
 
     private Star [] stars;
     private MainShip mainShip;
-
 
     private Sound laserSound;
     private Sound bulletSound;
@@ -54,11 +60,15 @@ public class GameScreen extends BaseScreen {
     private GameOver gameOver;
     private NewGameButton newGameButton;
 
-    public GameScreen(Game game){
-        this.game = game;
-    }
     public GameScreen(){
     }
+
+    private Font font;
+    private StringBuilder sbFrags;
+    private StringBuilder sbHp;
+    private StringBuilder sbLevel;
+
+    private int frags;
 
 
     @Override
@@ -82,11 +92,25 @@ public class GameScreen extends BaseScreen {
         enemyEmitter = new EnemyEmitter(worldBounds, enemyPool, atlas);
         mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
         gameOver = new GameOver(atlas);
-        newGameButton = new NewGameButton(atlas,game);
+        newGameButton = new NewGameButton(atlas, this);
+
+        font = new Font("font/font.fnt", "font/font.png");
+        sbFrags = new StringBuilder();
+        sbHp = new StringBuilder();
+        sbLevel = new StringBuilder();
 
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/music.mp3"));
         music.setLooping(true);
         music.play();
+    }
+
+    public void startNewGame() {
+        frags = 0;
+
+        mainShip.startNewGame();
+
+        bulletPool.freeAllActiveObjects();
+        enemyPool.freeAllActiveObjects();
     }
 
     @Override
@@ -107,6 +131,7 @@ public class GameScreen extends BaseScreen {
         mainShip.resize(worldBounds);
         gameOver.resize(worldBounds);
         newGameButton.resize(worldBounds);
+        font.setSize(FONT_SIZE);
     }
 
     @Override
@@ -117,6 +142,7 @@ public class GameScreen extends BaseScreen {
         bulletPool.dispose();
         enemyPool.dispose();
         explosionPool.dispose();
+        font.dispose();
         laserSound.dispose();
         bulletSound.dispose();
         explosionSound.dispose();
@@ -125,15 +151,21 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        mainShip.touchDown(touch, pointer, button);
-        newGameButton.touchDown(touch, pointer, button);
+        if (!mainShip.isDestroyed()) {
+            mainShip.touchDown(touch, pointer, button);
+        }else {
+            newGameButton.touchDown(touch, pointer, button);
+        }
         return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        mainShip.touchUp(touch, pointer, button);
-        newGameButton.touchUp(touch, pointer, button);
+        if (!mainShip.isDestroyed()) {
+            mainShip.touchUp(touch, pointer, button);
+        }else {
+            newGameButton.touchUp(touch, pointer, button);
+        }
         return false;
     }
 
@@ -189,6 +221,9 @@ public class GameScreen extends BaseScreen {
                 if (enemyShip.isBulletCollision(bullet)) {
                     enemyShip.damage(bullet.getDamage());
                     bullet.destroy();
+                    if (enemyShip.isDestroyed()) {
+                        frags++; //считаем убитые от пули
+                    }
                 }
             }
             if (bullet.getOwner() != mainShip) {
@@ -203,6 +238,7 @@ public class GameScreen extends BaseScreen {
     private void freeAllDestroyed() {
         bulletPool.freeAllDestroyedActiveSprites();
         enemyPool.freeAllDestroyedActiveSprites();
+        explosionPool.freeAllDestroyedActiveSprites();
     }
 
     private void draw() {
@@ -222,9 +258,16 @@ public class GameScreen extends BaseScreen {
             enemyPool.drawActiveSprites(batch);
         }
         explosionPool.drawActiveSprites(batch);
+        printInfo();
         batch.end();
     }
-    public void newGame(){
-        mainShip.flushDestroy();
+
+    private void printInfo() {
+        sbFrags.setLength(0);
+        sbHp.setLength(0);
+        sbLevel.setLength(0);
+        font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft() + PADDING, worldBounds.getTop() - PADDING);
+        font.draw(batch, sbHp.append(HP).append(mainShip.getHp()), worldBounds.pos.x, worldBounds.getTop() - PADDING, Align.center);
+        font.draw(batch, sbLevel.append(LEVEL).append(enemyEmitter.getLevel()), worldBounds.getRight() - PADDING, worldBounds.getTop() - PADDING, Align.right);
     }
 }

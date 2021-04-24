@@ -14,12 +14,11 @@ public class NewGameButton extends BaseButton {
     private static final float PADDING = 0.3f;
     private static final float PADDING_LEFT = 0.05f;
 
-    private final Game game;
+    private final GameScreen gameScreen;
 
-    public NewGameButton(TextureAtlas atlas, Game game) {
+    public NewGameButton(TextureAtlas atlas, GameScreen gameScreen) {
         super(atlas.findRegion("button_new_game"));
-        System.out.println("NewGame Construct");
-        this.game = game;
+        this.gameScreen = gameScreen;
     }
 
     @Override
@@ -28,12 +27,11 @@ public class NewGameButton extends BaseButton {
         setHeightProportion(HEIGHT);
         setBottom(worldBounds.getBottom()+PADDING);
         setLeft(worldBounds.getLeft()+PADDING_LEFT);
-
     }
 
 
     @Override
     public void action() {
-        game.setScreen(new GameScreen());
+        gameScreen.startNewGame();
     }
 }

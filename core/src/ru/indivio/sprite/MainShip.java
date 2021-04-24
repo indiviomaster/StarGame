@@ -23,6 +23,8 @@ public class MainShip extends Ship {
     private int leftPointer = INVALID_POINTER;
     private int rightPointer = INVALID_POINTER;
 
+    private static final int HP = 100; //hp from main
+
     public MainShip(TextureAtlas atlas, BulletPool bulletPool, ExplosionPool explosionPool, Sound sound) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
         this.bulletPool = bulletPool;
@@ -34,9 +36,7 @@ public class MainShip extends Ship {
         bulletHeight = 0.01f;
         damage = 1;
         reloadInterval = 0.2f;
-        hp = 1;
-        //onScreen = true;
-        //onMarsh = false;
+        hp = HP;
     }
 
     @Override
@@ -154,5 +154,16 @@ public class MainShip extends Ship {
                 || bullet.getLeft() > getRight()
                 || bullet.getBottom() > pos.y
                 || bullet.getTop() < getBottom());
+    }
+
+    public void startNewGame() {
+        pressedLeft = false;
+        pressedRight = false;
+        leftPointer = INVALID_POINTER;
+        rightPointer = INVALID_POINTER;
+        stop();
+        this.pos.x = worldBounds.pos.x;
+        hp = HP;
+        flushDestroy();
     }
 }
