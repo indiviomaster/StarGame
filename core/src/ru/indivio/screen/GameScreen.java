@@ -17,14 +17,17 @@ import ru.indivio.math.Rect;
 import ru.indivio.pool.BulletPool;
 import ru.indivio.pool.EnemyPool;
 import ru.indivio.pool.ExplosionPool;
+import ru.indivio.pool.MedcinePool;
 import ru.indivio.sprite.Background;
 import ru.indivio.sprite.Bullet;
 import ru.indivio.sprite.EnemyShip;
 import ru.indivio.sprite.GameOver;
 import ru.indivio.sprite.MainShip;
+import ru.indivio.sprite.Medcine;
 import ru.indivio.sprite.NewGameButton;
 import ru.indivio.sprite.Star;
 import ru.indivio.utils.EnemyEmitter;
+import ru.indivio.utils.MedcineEmitter;
 
 
 public class GameScreen extends BaseScreen {
@@ -41,6 +44,7 @@ public class GameScreen extends BaseScreen {
     private Background background;
 
     private TextureAtlas atlas;
+    private TextureAtlas medcineAtlas;
 
     private Star [] stars;
     private MainShip mainShip;
@@ -52,11 +56,13 @@ public class GameScreen extends BaseScreen {
     private EnemyPool enemyPool;
     private EnemyEmitter enemyEmitter;
 
+
     private Music music;
 
     private BulletPool bulletPool;
     private ExplosionPool explosionPool;
-
+    private MedcinePool medcinePool;
+    private MedcineEmitter medcineEmitter;
     private GameOver gameOver;
     private NewGameButton newGameButton;
 
@@ -78,6 +84,7 @@ public class GameScreen extends BaseScreen {
         background = new Background(bg);
 
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
+        medcineAtlas = new TextureAtlas("textures/medical_atlas.atlas");
         laserSound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
         bulletSound = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet.wav"));
         explosionSound = Gdx.audio.newSound(Gdx.files.internal("sounds/explosion.wav"));
@@ -91,6 +98,8 @@ public class GameScreen extends BaseScreen {
         enemyPool = new EnemyPool(bulletPool,explosionPool, worldBounds, bulletSound);
         enemyEmitter = new EnemyEmitter(worldBounds, enemyPool, atlas);
         mainShip = new MainShip(atlas, bulletPool, explosionPool, laserSound);
+        medcinePool = new MedcinePool(worldBounds);
+        medcineEmitter = new MedcineEmitter(worldBounds,medcinePool,medcineAtlas);
         gameOver = new GameOver(atlas);
         newGameButton = new NewGameButton(atlas, this);
 
@@ -111,6 +120,7 @@ public class GameScreen extends BaseScreen {
 
         bulletPool.freeAllActiveObjects();
         enemyPool.freeAllActiveObjects();
+        medcinePool.freeAllActiveObjects();
     }
 
     @Override
@@ -141,6 +151,7 @@ public class GameScreen extends BaseScreen {
         atlas.dispose();
         bulletPool.dispose();
         enemyPool.dispose();
+        medcinePool.dispose();
         explosionPool.dispose();
         font.dispose();
         laserSound.dispose();
@@ -189,7 +200,9 @@ public class GameScreen extends BaseScreen {
             mainShip.update(delta);
             bulletPool.updateActiveSprites(delta);
             enemyPool.updateActiveSprites(delta);
+            medcinePool.updateActiveSprites(delta);
             enemyEmitter.generate(delta);
+            medcineEmitter.generate(delta);
         }
         explosionPool.updateActiveSprites(delta);
     }
@@ -198,6 +211,19 @@ public class GameScreen extends BaseScreen {
         if (mainShip.isDestroyed()) {
             return;
         }
+        List<Medcine> medcineList = medcinePool.getActiveObjects();
+        for (Medcine med : medcineList) {
+            if (med.isDestroyed()) {
+                continue;
+            }
+            float minDist = med.getHalfWidth() + mainShip.getHalfWidth();
+            if (med.pos.dst(mainShip.pos) < minDist) {
+                med.destroy();
+                mainShip.healing(med.getHealingPoint());
+            }
+        }
+
+
         List<EnemyShip> enemyShipList = enemyPool.getActiveObjects();
         for (EnemyShip enemyShip : enemyShipList) {
             if (enemyShip.isDestroyed()) {
@@ -239,6 +265,7 @@ public class GameScreen extends BaseScreen {
         bulletPool.freeAllDestroyedActiveSprites();
         enemyPool.freeAllDestroyedActiveSprites();
         explosionPool.freeAllDestroyedActiveSprites();
+        medcinePool.freeAllDestroyedActiveSprites();
     }
 
     private void draw() {
@@ -256,6 +283,7 @@ public class GameScreen extends BaseScreen {
             mainShip.draw(batch);
             bulletPool.drawActiveSprites(batch);
             enemyPool.drawActiveSprites(batch);
+            medcinePool.drawActiveSprites(batch);
         }
         explosionPool.drawActiveSprites(batch);
         printInfo();
