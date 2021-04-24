@@ -16,11 +16,11 @@ public class MedcineEmitter {
 
     private static final float GENERATE_INTERVAL = 4f;
 
-    private static final float SMALL_HEIGHT = 0.1f;
+    private static final float SMALL_HEIGHT = 0.05f;
     private static final int SMALL_HP = 1;
-    private static final float MEDIUM_HEIGHT = 0.1f;
+    private static final float MEDIUM_HEIGHT = 0.05f;
     private static final int MEDIUM_HP = 50;
-    private static final float BIG_HEIGHT = 0.1f;
+    private static final float BIG_HEIGHT = 0.05f;
     private static final int BIG_HP = 100;
 
     private final Rect worldBounds;
@@ -58,14 +58,14 @@ public class MedcineEmitter {
 
             } else if (type < 0.8f) {
                 medcine.set(
-                        medcineSmallRegions,
+                        medcineMediumRegions,
                         velocity,
                         MEDIUM_HEIGHT,
                         MEDIUM_HP
                 );
             } else {
                 medcine.set(
-                        medcineSmallRegions,
+                        medcineBigRegions,
                         velocity,
                         BIG_HEIGHT,
                         BIG_HP
