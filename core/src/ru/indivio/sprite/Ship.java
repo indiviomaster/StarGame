@@ -43,7 +43,7 @@ public class Ship extends Sprite {
         super(region, rows, cols, frames);
         bulletV = new Vector2();
         v = new Vector2();
-        v0 = new Vector2(0, -1f);
+        v0 = new Vector2(); //v0 = new Vector2(0, -1f);
     }
 
     @Override
@@ -91,5 +91,7 @@ public class Ship extends Sprite {
         sound.play();
     }
 
-
+    public int getHp() {
+        return hp;
+    }
 }
