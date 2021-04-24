@@ -69,6 +69,12 @@ public class Ship extends Sprite {
         frame = 1;
         damageAnimateTimer = 0f;
     }
+    public void healing(int hp) {
+        this.hp += hp;
+        if (this.hp>300){
+            this.hp = 300;
+        }
+    }
 
     @Override
     public void destroy() {

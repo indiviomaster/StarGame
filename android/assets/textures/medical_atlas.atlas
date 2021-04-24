@@ -1,0 +1,26 @@
+
+medical_atlas.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+big_medcine
+  rotate: false
+  xy: 1, 203
+  size: 400, 200
+  orig: 400, 200
+  offset: 0, 0
+  index: -1
+medium_medcine
+  rotate: false
+  xy: 1, 1
+  size: 400, 200
+  orig: 400, 200
+  offset: 0, 0
+  index: -1
+small_medcine
+  rotate: false
+  xy: 403, 203
+  size: 400, 200
+  orig: 400, 200
+  offset: 0, 0
+  index: -1
